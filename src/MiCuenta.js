@@ -1,51 +1,65 @@
-import React,{useState,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import './MiCuenta.css';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
-import {getReservationsByUser  } from './api';
-
+import { getReservationsByUser, getImagesByHotelId } from './api';
 
 const MiCuenta = () => {
   const userData = Cookies.get('userData');
   const [reservas, setReservas] = useState([]);
-  
-  const getReservas = async (event) => {
+  const [imagenPerfil, setImagenPerfil] = useState(null); // Cambiado a null
+
+  const getReservas = async () => {
     const response = await getReservationsByUser();
     const reservasData = response.data.reservations;
     setReservas(reservasData);
-    console.log(response)
+    console.log(response);
   };
-  
+
+  const getImagen = async () => {
+    try {
+      const response = await getImagesByHotelId();
+      const imagen = response.data.images[0].Data;
+      // Almacenar la imagen decodificada como un objeto Uint8Array
+      setImagenPerfil(new Uint8Array(atob(imagen).split('').map(char => char.charCodeAt(0))));
+    } catch (error) {
+      console.error('Error al obtener la imagen de perfil:', error);
+    }
+  };
 
   const navigate = useNavigate();
-  
-  
+
+  useEffect(() => {
+    getReservas();
+    getImagen();
+  }, []); // La dependencia vacía asegura que estos efectos solo se ejecuten una vez al montar el componente.
 
   if (!userData) {
-    navigate("/")
+    navigate('/');
     return (
       <div className="container">
         <h1>Mi Cuenta</h1>
         <p>No se encontraron datos de usuario.</p>
       </div>
-      
     );
   }
 
   const user = JSON.parse(userData);
 
-
   return (
-    <div className="container" onLoad={getReservas}>
+    <div className="container">
       <h1>Mi Cuenta</h1>
       <div className="user-details">
         <div className="user-image">
-          <img
-            src="https://definicion.de/wp-content/uploads/2019/07/perfil-de-usuario.png"
-            alt="Foto de perfil"
-            width="250"
-            height="250"
-          />
+          {imagenPerfil && (
+            <img
+              id="perfil"
+              src={`data:image/jpeg;base64,${btoa(String.fromCharCode.apply(null, imagenPerfil))}`}
+              alt="Foto de perfil"
+              width="250"
+              height="250"
+            />
+          )}
         </div>
         <div className="user-info">
           <p className="user-info-line">

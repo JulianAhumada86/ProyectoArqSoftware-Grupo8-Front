@@ -16,6 +16,7 @@ import Cookies from 'js-cookie';
 import Admin from './Admin';
 import CreateHotel from './CreateHotel';
 import AddImages from './AddImages';
+import Landing from './Landing';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -30,7 +31,7 @@ function App() {
     if (userDataCookie) {
       const user = JSON.parse(userDataCookie);
       setIsLoggedIn(true);
-      setAccountName(`${user.name} ${user.lastName}`);
+      setAccountName('${user.name} ${user.lastName}');
       setUserData(user);
     }
   }, []);
@@ -59,7 +60,6 @@ function App() {
       </footer>
     );
   };
-
 
   return (
     <Router>
@@ -94,60 +94,9 @@ function App() {
         </Navbar>
         <div className="container mt-5">
           <Routes>
-            <Route
-              path="/"
-              element={
-                <Carousel> 
-                  <Carousel.Item>
-                    <img
-                      className="d-block w-100"
-                      src="https://mcaleer-rushe.co.uk/site/wp-content/uploads/2019/08/Maldron-Glasgow-I.jpg"
-                      alt="Imagen 1"
-                    />
-                    <Link to="/hotel">
-                      <Carousel.Caption>
-                        <h3>Maldron Hotel Glasgow</h3>
-                        <p>Se encuentra en el centro de la capital escocesa</p>
-                      </Carousel.Caption>
-                    </Link>  
-                  </Carousel.Item>
-                  <Carousel.Item>
-                    <img
-                      className="d-block w-100"
-                      src="https://mcaleer-rushe.co.uk/site/wp-content/uploads/2019/05/Maldron-Hotel-Belfast-IntAirport-I.jpg"
-                      alt="Imagen 2"
-                    />
-                    <Link to="/hotel">
-                      <Carousel.Caption>
-                        <h3>Maldron Hotel Belfast</h3>
-                        <p>El primer hotel de nuestra cadena fuera del Reino Unido</p>
-                      </Carousel.Caption>
-                    </Link>  
-                  </Carousel.Item>
-                  <Carousel.Item>
-                    <img 
-                      className="d-block w-100"
-                      src="https://apithegreeks.gumlet.io/hotels/maldron-hotel-manchester-city-centre/cover.jpg?w=1900&h=&v=1687503002&site=thegreeks"
-                      alt="Imagen 3"
-                    />
-                    <Link to="/hotel">
-                      <Carousel.Caption>
-                        <h3>Maldron Hotel Dublín</h3>
-                        <p>Ubicado en el aeropuerto más importante de toda Irlanda</p>
-                      </Carousel.Caption>
-                    </Link>
-                  </Carousel.Item>
-                </Carousel>
-              }
-            />
-            <Route
-              path="/micuenta"
-              element={<MiCuenta usuario={userData} />}
-            />
-            <Route
-              path="/registro"
-              element={<Register onLogin={handleLogin} />}
-            />
+            <Route path="/" element={<Landing/>}/>
+            <Route path="/micuenta" element={<MiCuenta usuario={userData} />}/>
+            <Route path="/registro" element={<Register onLogin={handleLogin} />}/>
             <Route path="/login" element={<LogIn onLogin={handleLogin} />} />
             <Route path="/reserva" element={<Reservation />} />
             <Route path="/admin" element={<Admin />} />

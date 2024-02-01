@@ -105,7 +105,7 @@ function Reservation() {
                   .find((hotel) => hotel.id === parseInt(formData.option1, 10))
                   ?.habitaciones.map((habitacion) => (
                     <option key={habitacion.id} value={habitacion.id}>
-                      {habitacion.tipo}
+                      {habitacion.Nombre}
                     </option>
                   ))}
               </select>
