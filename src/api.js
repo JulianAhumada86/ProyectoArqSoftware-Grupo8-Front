@@ -170,6 +170,18 @@ export const getHotelsC = async () => {
   }
 };
 
+export const getHotelById = async (id) => {
+  try {
+ 
+    const response = await axios.get(`${API_URL}/hotelId/${id}`);
+    return response
+
+
+  } catch (error) {
+    console.error('Error al obtener los usuarios:', error);
+  }
+};
+
 export const getReservations = async () => {
   try {
     const userData = Cookies.get('userData');

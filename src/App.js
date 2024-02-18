@@ -101,7 +101,7 @@ function App() {
             <Route path="/admin" element={<Admin />} />
             <Route path="/admin/crearHotel" element={<CreateHotel />} />
             <Route path="/admin/crearHotel/imagenes" element={<AddImages/>}/>
-            <Route path="/hotel" element={<Hotel/>}/>
+            <Route path="/hotel/:id" element={<Hotel/>}/>
             <Route path="/confirmacion" element={<Confirmation/>}/>
           </Routes>
         </div>
