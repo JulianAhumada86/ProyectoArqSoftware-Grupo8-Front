@@ -18,7 +18,7 @@ const MiCuenta = () => {
 
   const getImagen = async () => {
     try {
-      const response = await getImagesByHotelId();
+      const response = await getImagesByHotelId(1);
       const imagen = response.data.images[0].Data;
       // Almacenar la imagen decodificada como un objeto Uint8Array
       setImagenPerfil(new Uint8Array(atob(imagen).split('').map(char => char.charCodeAt(0))));

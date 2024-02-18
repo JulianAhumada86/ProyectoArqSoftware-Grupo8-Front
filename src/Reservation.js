@@ -30,6 +30,7 @@ function Reservation() {
     // ... código del formulario
 
     try {
+      console.log(user.id)
       const response = await agregarReservation(
         formData.option1,
         formData.startDate,

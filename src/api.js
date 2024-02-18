@@ -107,7 +107,7 @@ export const loginUser = async (email, password) => {
 
 //Reservation
 
-export const agregarReservation = async (idHotel, inicio, final, idUser, habitacion,token) => {
+export const agregarReservation = async (idHotel, inicio, final, idUser, habitacion, token) => {
   try { 
     axios.defaults.headers.common['Authorization'] = token
     const response = await axios.post(`${API_URL}/usuario/agregarReservation/${idHotel}/${inicio}/${final}/${idUser}/${habitacion}`);
@@ -118,7 +118,7 @@ export const agregarReservation = async (idHotel, inicio, final, idUser, habitac
   }
 };
 
-export const disponibilidadDeReserva = async (idHotel, inicio, final, idUser, habitacion,token) => {
+export const disponibilidadDeReserva = async (idHotel, inicio, final, idUser, habitacion, token) => {
   try { 
     const response = await axios.post(`${API_URL}/dispoibilidadDeReserva/${idHotel}/${inicio}/${final}/${idUser}/${habitacion}`);
     return response;
@@ -206,7 +206,7 @@ export const getReservationsByUser = async () => {
 
 export const getImagesByHotelId = async (idHotel) => {
   try{
-    const response = await axios.get(`${API_URL}/getImagesByHotelId/1`)
+    const response = await axios.get(`${API_URL}/getImagesByHotelId/${idHotel}`)
     return response
   } catch (error) {
     console.error('Error al obtener las imagenes:', error);

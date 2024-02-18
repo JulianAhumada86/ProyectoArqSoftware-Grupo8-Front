@@ -2,42 +2,32 @@ import React, { useState, useEffect } from 'react';
 import {Carousel} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import { getImagesByHotelId, getHotelsC } from './api';
+import Reservation from './Reservation';
 
 function Landing() {
   const [hoteles, setHoteles] = useState([]);
+  const [imagenes, setImagenes] = useState([]);
 
   const getHoteles = async () => {
     try {
       const response = await getHotelsC();
-      const reservasData = response.data.hotels;
-      setHoteles(reservasData);
+      const hotelsData = response.data.hotels;
+      let myArray = []
+      for (let i=1; i<=3;i++){
+        //hotelsData[i].id
+        const response2 = await getImagesByHotelId(i);
+        const imagesData = response2.data.images[0].Data
+
+        myArray.push(new Uint8Array(atob(imagesData).split('').map(char => char.charCodeAt(0))))
+      }
+      console.log(myArray)
+      setImagenes(myArray)
+      setHoteles(hotelsData);
     } catch (error) {
       console.error('Error al obtener hoteles:', error);
     }
   };
 
-  const getImagen = async (hotelId) => {
-    try {
-      const response = await getImagesByHotelId(hotelId);
-      const imagenes = response.data.images;
-  
-      // Ordenar las imágenes por el id de manera ascendente
-      imagenes.sort((a, b) => a.id - b.id);
-  
-      // Tomar la primera imagen después de ordenar
-      const primeraImagen = imagenes[0];
-  
-      console.log(primeraImagen);
-    } catch (error) {
-      console.error('Error al obtener imágenes:', error);
-    }
-  };
-
-  const Sorongo = async () => {
-    hoteles.forEach((hotel) => {
-      getImagen(hotel.id);
-    });
-  }
 
   useEffect(() => {
     getHoteles();
@@ -47,16 +37,16 @@ function Landing() {
   <Carousel>
     {hoteles.map((hotel) => (
       <Carousel.Item key={hotel.id} value={hotel.id}>
-        {hotel.primeraImagen ? (
+        {imagenes[hotel.id-1] ? (
           <img
             className="d-block w-100"
-            src={hotel.primeraImagen}
+            src={`data:image/jpeg;base64,${btoa(String.fromCharCode.apply(null, imagenes[hotel.id-1]))}`}
             alt={`Imagen de ${hotel.name}`}
           />
         ) : (
           <img
             className="d-block w-100"
-            src="https://mcaleer-rushe.co.uk/site/wp-content/uploads/2019/05/Maldron-Hotel-Belfast-IntAirport-I.jpg"
+            src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/23e0da0f-37e6-40e5-a0d9-da5ad7056048/d5l32dr-d6117e9f-ab65-421c-8172-202a34c72455.jpg/v1/fill/w_1024,h_498,q_75,strp/goku_and_vegeta_the_kiss_by_tracexvalintyne_d5l32dr-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzIzZTBkYTBmLTM3ZTYtNDBlNS1hMGQ5LWRhNWFkNzA1NjA0OFwvZDVsMzJkci1kNjExN2U5Zi1hYjY1LTQyMWMtODE3Mi0yMDJhMzRjNzI0NTUuanBnIiwiaGVpZ2h0IjoiPD00OTgiLCJ3aWR0aCI6Ijw9MTAyNCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS53YXRlcm1hcmsiXSwid21rIjp7InBhdGgiOiJcL3dtXC8yM2UwZGEwZi0zN2U2LTQwZTUtYTBkOS1kYTVhZDcwNTYwNDhcL3RyYWNleHZhbGludHluZS00LnBuZyIsIm9wYWNpdHkiOjk1LCJwcm9wb3J0aW9ucyI6MC40NSwiZ3Jhdml0eSI6ImNlbnRlciJ9fQ.a204nMjn7GFD-WJyIyUZpyHnGXcb67GOpktYiozMUcs"
             alt="Respaldo"
           />  
         )}
