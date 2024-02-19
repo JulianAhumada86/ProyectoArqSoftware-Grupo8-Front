@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Button ,Carousel} from 'react-bootstrap';
+import { Container, Row, Col, Button ,Carousel, Card} from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { getHotelById, getImagesByHotelIdMap,agregarReservation } from './api';
 import { useNavigate } from 'react-router-dom';
@@ -18,6 +18,7 @@ function HotelDetail() {
       const response = await getHotelById(id);
       setHotel(response.data);
       console.log(response.data)
+      console.log(hotel.amenities)
     } catch (error) {
       console.error(error);
     }
@@ -46,7 +47,6 @@ function HotelDetail() {
         for(let i =0;i<hotel.habitaciones.length;i++){
           console.log(hotel.habitaciones[i].Id.toString())
           console.log(idHabitacion)
-          console.log(hotel.habitaciones)
           if(hotel.habitaciones[i].Id.toString() === idHabitacion){
             setHabitacion(hotel.habitaciones[i].Nombre) 
           }
@@ -93,7 +93,7 @@ function HotelDetail() {
         <Col md={6}>
           {hotel ? (
             <>
-              <h1>{hotel.name}</h1>
+              <h1>Maldron {hotel.name}</h1>
               <p>{hotel.description}</p>
             </>
           ) : (
@@ -105,22 +105,7 @@ function HotelDetail() {
         </Col>
         <Col md={6}>
 
-          {showReservations && (
-        <form onSubmit={handleSubmit}>
-
-            <div>
-              {/* Aquí coloca el contenido de la reserva */}
-              <h3>Reserva</h3>
-              <p>Fecha de inicio: {startDate}</p>
-              <p>Fecha final: {finalDate}</p>
-              <p>Nombre del hotel: {nombreHotel}</p>
-              <p>Habitacion {tipoHabitacion}</p>
-              <button type="submit" className="btn btn-primary">
-                Completar Reserva
-              </button>
-            </div>
-          </form>
-          )}
+          
           <Carousel style={{ height: '100%', width: '100%' }}>
             {imagenes.map((imagen, index) => (
               <Carousel.Item key={index} style={{ height: '100%' }}>
@@ -135,6 +120,35 @@ function HotelDetail() {
           </Carousel>
         </Col>
       </Row>
+      <Row>
+
+      </Row>
+      <Row className="d-flex justify-content-between mt-4">
+        {showReservations && (
+          <form onSubmit={handleSubmit} className="w-100">
+            <Row>
+              <Col md={4} className="text-left">
+                <p>Fecha de inicio: {startDate}</p>
+                <p>Fecha final: {finalDate}</p>
+              </Col>
+
+              <Col md={4} className="text-center align-self-center">
+                <p>Habitación: {tipoHabitacion}</p>
+              </Col>
+
+              <Col md={4} className="d-flex justify-content-end align-self-center">
+                <p> </p>
+                <Button type="submit" className="btn btn-primary">
+                  Completar Reserva
+                </Button>
+              </Col>
+            </Row>
+          </form>
+        )}
+      </Row>
+
+
+
     </Container>
   );
 }
