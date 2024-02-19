@@ -17,6 +17,7 @@ function HotelDetail() {
     try {
       const response = await getHotelById(id);
       setHotel(response.data);
+      console.log(response.data)
     } catch (error) {
       console.error(error);
     }
