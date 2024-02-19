@@ -24,13 +24,25 @@ function Reservation() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    
     try {
+      let idHabitacion
+    for (let i=0; i< hoteles.length;i++){
+      if(hoteles[i].id = formData.option1){
+        for(let j=0;j<hoteles[i].habitaciones.length;j++){
+          if(hoteles[i].habitaciones[j].Nombre==formData.option2){
+            idHabitacion = hoteles[i].habitaciones[j].Id
+            console.log(idHabitacion)
+          }
+        }
+      }
+    }
+
       const response = await agregarReservation(
         formData.option1,
         formData.startDate,
         formData.endDate,
-        formData.option2,
+        idHabitacion,
         user.token
       );
 
