@@ -78,7 +78,6 @@ export const postImage = async (image,idHotel) => {
 }
 
 
-//LogIn
 
 export const loginUser = async (email, password) => {
     const data = {
@@ -106,7 +105,6 @@ export const loginUser = async (email, password) => {
 };
 
 //Reservation
-
 export const agregarReservation = async (idHotel, inicio, final, habitacion, token) => {
   try { 
     axios.defaults.headers.common['Authorization'] = token
@@ -118,9 +116,10 @@ export const agregarReservation = async (idHotel, inicio, final, habitacion, tok
   }
 };
 
-export const disponibilidadDeReserva = async (idHotel, inicio, final, idUser, habitacion, token) => {
+//Dispponibilidad de reservas
+export const disponibilidadDeReserva = async (idHotel, inicio, final, habitacion) => {
   try { 
-    const response = await axios.post(`${API_URL}/dispoibilidadDeReserva/${idHotel}/${inicio}/${final}/${idUser}/${habitacion}`);
+    const response = await axios.get(`${API_URL}/disponibilidadDeReserva/${idHotel}/${inicio}/${final}/${habitacion}`);
     return response;
   } catch (error) {
     return error.response
@@ -128,6 +127,7 @@ export const disponibilidadDeReserva = async (idHotel, inicio, final, idUser, ha
   }
 };
 
+//Get users
 export const getUsers = async () => {
   try {
     const userData = Cookies.get('userData');
@@ -143,27 +143,20 @@ export const getUsers = async () => {
   }
 };
 
+//GetHotels
 export const getHotels = async () => {
-  try {
+  try{
     const userData = Cookies.get('userData');
     const user = JSON.parse(userData);
-    
     axios.defaults.headers.common['Authorization'] = user.token
-    const response = await axios.get(`${API_URL}/hotels`);
-    return response
-
-
-  } catch (error) {
-    console.error('Error al obtener los usuarios:', error);
+  }catch(error){
+    console.log("Usuario no regsitrado")
+    
   }
-};
-
-export const getHotelsC = async () => {
   try {
- 
+    
     const response = await axios.get(`${API_URL}/hotels`);
     return response
-
 
   } catch (error) {
     console.error('Error al obtener los usuarios:', error);

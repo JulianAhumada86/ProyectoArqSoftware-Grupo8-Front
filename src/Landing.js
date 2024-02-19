@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {Carousel} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
-import { getImagesByHotelId, getHotelsC } from './api';
+import { getImagesByHotelId, getHotels } from './api';
 
 function Landing() {
   const [hoteles, setHoteles] = useState([]);
@@ -9,7 +9,7 @@ function Landing() {
 
   const getHoteles = async () => {
     try {
-      const response = await getHotelsC();
+      const response = await getHotels();
       const hotelsData = response.data.hotels;
       let myArray = []
       for (let i=1; i<=3;i++){

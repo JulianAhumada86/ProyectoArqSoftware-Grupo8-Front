@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getHotels } from './api';
-import { agregarReservation } from './api';
+import { disponibilidadDeReserva } from './api';
 
 function Reservation() {
-  var user = JSON;
+
   const [hoteles, setHoteles] = useState([]);
   const [formData, setFormData] = useState({
     option1: '',
@@ -27,27 +27,25 @@ function Reservation() {
     
     try {
       let idHabitacion
-    for (let i=0; i< hoteles.length;i++){
-      if(hoteles[i].id = formData.option1){
-        for(let j=0;j<hoteles[i].habitaciones.length;j++){
-          if(hoteles[i].habitaciones[j].Nombre==formData.option2){
-            idHabitacion = hoteles[i].habitaciones[j].Id
-            console.log(idHabitacion)
+      for (let i=0; i< hoteles.length;i++){
+        if(hoteles[i].id = formData.option1){
+          for(let j=0;j<hoteles[i].habitaciones.length;j++){
+            if(hoteles[i].habitaciones[j].Nombre==formData.option2){
+              idHabitacion = hoteles[i].habitaciones[j].Id
+              console.log(idHabitacion)
+            }
           }
         }
       }
-    }
-
-      const response = await agregarReservation(
+      const response = await disponibilidadDeReserva(
         formData.option1,
         formData.startDate,
         formData.endDate,
         idHabitacion,
-        user.token
       );
 
       if (response.status === 200 || response.status === 201) {
-        navigate('/hotel');
+        navigate(`/hotel/${formData.option1}`);
       } else {
         setErrorMessage('Error en los datos');
         setShowError(true);
