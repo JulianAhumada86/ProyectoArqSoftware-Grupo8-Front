@@ -1,58 +1,125 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Card, Carousel, Button, Row, Col } from 'react-bootstrap';
-//import { FaWifi, FaSwimmingPool, FaParking, FaDumbbell, FaSpa } from 'react-icons/fa';
-import { getHotelById, getImagesByHotelIdMap} from './api';
+import { Container, Row, Col, Button ,Carousel} from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
+import { getHotelById, getImagesByHotelIdMap,agregarReservation } from './api';
+import { useNavigate } from 'react-router-dom';
 
 function HotelDetail() {
-    const { id } = useParams();
-    const [hotel, setHotel] = useState();
-    const [imagenes, setImagenes] = useState([]);
+  const { id, startDate, finalDate, idHabitacion } = useParams();
+  const [hotel, setHotel] = useState();
+  const [imagenes, setImagenes] = useState([]);
+  const [showReservations, setShowReservations] = useState(false);
+  const [nombreHotel,setNombre] = useState("Cargando")
+  const [tipoHabitacion,setHabitacion] = useState("Cargando")
+  const navigate = useNavigate();
 
-    const getHotel = async () =>{
-      try{
-        const response = await getHotelById(id);
-        const hotelData = response.data
-    
-        setHotel(hotelData)
-        //console.log(hotel)
-      }catch(error){
-      }
+  const getHotel = async () => {
+    try {
+      const response = await getHotelById(id);
+      setHotel(response.data);
+    } catch (error) {
+      console.error(error);
     }
-    const getImagenes = async () =>{
-      try{
-        const response2 = await getImagesByHotelIdMap(id);
-        const imgData = response2.map(image => new Uint8Array(atob(image.Data).split('').map(char => char.charCodeAt(0))))
-        console.log(imgData)
-        setImagenes(imgData)
-        //console.log(imagenes)
-      }catch(error){
-      }
-    }
+  };
 
-    useEffect(() => {
-        getHotel();
-        getImagenes();
-    }, [id]);
- 
+  const getImagenes = async () => {
+    try {
+      const response2 = await getImagesByHotelIdMap(id);
+      const imgData = response2.map(image =>
+        new Uint8Array(atob(image.Data).split('').map(char => char.charCodeAt(0)))
+      );
+      setImagenes(imgData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getHotel();
+    getImagenes();
+  }, [id]);
+
+  useEffect(() => {
+    if (startDate !== undefined && finalDate !== undefined && idHabitacion !== undefined) {
+      try{
+        for(let i =0;i<hotel.habitaciones.length;i++){
+          console.log(hotel.habitaciones[i].Id.toString())
+          console.log(idHabitacion)
+          console.log(hotel.habitaciones)
+          if(hotel.habitaciones[i].Id.toString() === idHabitacion){
+            setHabitacion(hotel.habitaciones[i].Nombre) 
+          }
+        }
+        setNombre(hotel.name)
+
+      }catch(error){
+        console.log(error)
+      }
+      setShowReservations(true);
+    } else {
+      setShowReservations(false);
+    }
+  }, [startDate, finalDate, idHabitacion,hotel]);
+
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try{
+      const response = await agregarReservation(
+        id,
+        startDate,
+        finalDate,
+        idHabitacion,
+      );
+     
+      if (response.status === 200 || response.status === 201) {
+        navigate(`/micuenta`);
+      }else if(response.status === 401){
+        navigate(`/login`);
+      }else if (response.status===400) {
+        console.log(`${response.data.message}`);
+        alert("Fecha ya no disponible, elegi otra para continuar")
+        navigate(`/reserva`);
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  };
 
   return (
     <Container className="mt-5">
       <Row>
         <Col md={6}>
-        {hotel ? (
-          <>
-            <h1>{hotel.name}</h1>
-            <p>{hotel.description}</p>
-          </>
-        ) : (
-          <>
-            <h1>Cargando...</h1>
-            <p>Cargando...</p>
-          </>
-        )}
+          {hotel ? (
+            <>
+              <h1>{hotel.name}</h1>
+              <p>{hotel.description}</p>
+            </>
+          ) : (
+            <>
+              <h1>Cargando...</h1>
+              <p>Cargando...</p>
+            </>
+          )}
         </Col>
         <Col md={6}>
+
+          {showReservations && (
+        <form onSubmit={handleSubmit}>
+
+            <div>
+              {/* Aquí coloca el contenido de la reserva */}
+              <h3>Reserva</h3>
+              <p>Fecha de inicio: {startDate}</p>
+              <p>Fecha final: {finalDate}</p>
+              <p>Nombre del hotel: {nombreHotel}</p>
+              <p>Habitacion {tipoHabitacion}</p>
+              <button type="submit" className="btn btn-primary">
+                Completar Reserva
+              </button>
+            </div>
+          </form>
+          )}
           <Carousel style={{ height: '100%', width: '100%' }}>
             {imagenes.map((imagen, index) => (
               <Carousel.Item key={index} style={{ height: '100%' }}>
@@ -60,19 +127,19 @@ function HotelDetail() {
                   src={`data:image/jpeg;base64,${btoa(String.fromCharCode.apply(null, imagen))}`}
                   alt={`Imagen ${index}`}
                   className="d-block w-100"
-                  style={{ objectFit: 'cover', height: '100%', maxHeight: '250px' }} // Ajusta maxHeight según sea necesario
+                  style={{ objectFit: 'cover', height: '100%', maxHeight: '250px' }}
                 />
               </Carousel.Item>
             ))}
           </Carousel>
         </Col>
       </Row>
-
     </Container>
   );
 }
 
 export default HotelDetail;
+
 
 /*
       <div className="mt-3">

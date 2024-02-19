@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import Select from 'react-select';
-import { postHotel } from './api';
+import { postHotel, tipoHabitaciones } from './api';
 
 function CreateHotel() {
   const [formData, setFormData] = useState({
@@ -16,10 +16,23 @@ function CreateHotel() {
       { tipo: '', cantidad: 0 },
     ],
   });
-
+  const [indexHabitacionSeleccionada, setIndexHabitacionSeleccionada] = useState('');
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState('');
   const [showError, setShowError] = useState(false);
+  const [habitaciones, setHabitaciones] = useState([]);
+  const [habitacionSeleccionada, setHabitacionSeleccionada] = useState('');
+  const [opcionesHabitaciones, setOpcionesHabitaciones] = useState([]);
+
+  const handleHabitacionChange = (e, index) => {
+    const { value } = e.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      habitaciones: prevFormData.habitaciones.map((habitacion, i) => (
+        i === index ? { ...habitacion, tipo: value } : habitacion
+      ))
+    }));
+  };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -43,39 +56,65 @@ function CreateHotel() {
   };
 
   const handleCrearHotel = async (event) => {
-      event.preventDefault(); 
+    event.preventDefault();
 
-      if(formData.nombre ==="" || formData.descripcion ===""){
-        setErrorMessage('Debe ingresar datos');
-        setShowError(true);
-      } else{
-      
+    if (formData.nombre === "" || formData.descripcion === "") {
+      setErrorMessage('Debe ingresar datos');
+      setShowError(true);
+    } else {
+
       try {
-        
+
         const response = await postHotel(
-          
+
           formData.nombre,
           formData.numHabitaciones,
           formData.descripcion
         );
 
-        if (response.status===200 ||response.status===201 ){
+        if (response.status === 200 || response.status === 201) {
           setShowError(false);
           navigate("/admin/crearHotel/imagenes")
 
-        }else if (response.status===400){
+        } else if (response.status === 400) {
           setErrorMessage('Algo no está funcionando');
           setShowError(true)
-        }else{
+        } else {
           setErrorMessage('Error en los datos');
           setShowError(true)
         }
-      }catch(error){
+      } catch (error) {
         setErrorMessage('caca');
         setShowError(true)
       }
     }
   };
+
+  const TipoHabitacion = async () => {
+    try {
+      console.log("Andando ")
+      const response = await tipoHabitaciones()
+      const hData = response.data
+      setHabitaciones(hData.Habitaciones)
+
+      const opciones = hData.Habitaciones.map((habitacion) => ({
+        value: habitacion.Id,
+        label: habitacion.Nombre,
+      }));
+
+      console.log(opciones)
+      setOpcionesHabitaciones(opciones)
+    } catch (error) {
+      console.log(error)
+    }
+  };
+
+
+  useEffect(() => {
+    TipoHabitacion();
+    console.log(opcionesHabitaciones)
+  }, []);
+
 
   return (
     <Container className="mt-5">
@@ -120,7 +159,7 @@ function CreateHotel() {
               onChange={handleAmenitiesChange}
             />
           </Form.Group>
-          <Form.Group style={{marginTop:'10px'}}>
+          <Form.Group style={{ marginTop: '10px' }}>
             <Form.Label>Tipo y Cantidad de Habitaciones</Form.Label>
             {[0, 1, 2, 3].map((index) => (
               <Row key={index}>
@@ -130,9 +169,12 @@ function CreateHotel() {
                     value={formData.habitaciones[index].tipo}
                     onChange={(e) => handleHabitacionesChange(index, 'tipo', e.target.value)}
                   >
-                    {/* Opciones de tipo */}
-                    <option value="">Seleccionar tipo</option>
-                    {/* Agrega más opciones según tus necesidades */}
+                    <option value="">Seeleccionar Habitacion</option>
+                    {opcionesHabitaciones.map((opcion) => (
+                      <option key={opcion.value} value={opcion.value}>
+                        {opcion.label}
+                      </option>
+                    ))}
                   </Form.Control>
                 </Col>
                 <Col md={4}>
@@ -147,7 +189,6 @@ function CreateHotel() {
               </Row>
             ))}
           </Form.Group>
-
         </Col>
       </Row>
       <Row className="mt-3">
@@ -162,6 +203,7 @@ function CreateHotel() {
       </Row>
     </Container>
   );
+
 }
 
 export default CreateHotel;

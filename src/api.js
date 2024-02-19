@@ -78,7 +78,6 @@ export const postImage = async (image,idHotel) => {
 }
 
 
-
 export const loginUser = async (email, password) => {
     const data = {
       email: email,
@@ -105,9 +104,20 @@ export const loginUser = async (email, password) => {
 };
 
 //Reservation
-export const agregarReservation = async (idHotel, inicio, final, habitacion, token) => {
-  try { 
-    axios.defaults.headers.common['Authorization'] = token
+export const agregarReservation = async (idHotel, inicio, final, habitacion) => {
+  
+  try{
+    const userData = Cookies.get('userData');
+    const user = JSON.parse(userData);
+    axios.defaults.headers.common['Authorization'] = user.token
+
+  }
+  catch(error){
+   alert("Token expirado, registrece de nuevo para continuar")
+   
+  }
+  try {
+    
     const response = await axios.post(`${API_URL}/usuario/agregarReservation/${idHotel}/${inicio}/${final}/${habitacion}`);
     return response;
   } catch (error) {
@@ -118,12 +128,29 @@ export const agregarReservation = async (idHotel, inicio, final, habitacion, tok
 
 //Dispponibilidad de reservas
 export const disponibilidadDeReserva = async (idHotel, inicio, final, habitacion) => {
+  console.log("Eca estoy")
+  
   try { 
-    const response = await axios.get(`${API_URL}/disponibilidadDeReserva/${idHotel}/${inicio}/${final}/${habitacion}`);
-    return response;
-  } catch (error) {
-    return error.response
     
+    const response = await axios.get(`${API_URL}/disponibilidadDeReserva/${idHotel}/${inicio}/${final}/${habitacion}`);    
+    if (response.status===200 || response.status===201){
+      try {
+        const userData = Cookies.get('userData');
+        const user = JSON.parse(userData);
+        console.log(user.token) 
+      }catch(error){
+        alert("Reservacion Disponible, registrece para continuar");
+        response.status=501
+        return response
+      }
+      return response;
+    
+    }
+  } catch (error) {
+    let er = error.response.data
+    console.log(error);
+    return error.response
+   
   }
 };
 
@@ -248,5 +275,19 @@ export const InsertHotel = async (data) => {
   } catch (error) {
     console.error('Error al insertar el hotel:', error);
     throw error;  // Lanza el error para que pueda ser manejado por el código que llama a InsertHotel
+  }
+};
+
+export const tipoHabitaciones = async () =>{
+  try {
+    const userData = Cookies.get('userData');
+    const user = JSON.parse(userData);
+
+    axios.defaults.headers.common['Authorization'] = user.token;
+    const response = await axios.get(`${API_URL}/admin/Habitaciones`);
+    return response
+
+  } catch (error) {
+    console.error('Error al obtener los usuarios:', error);
   }
 };

@@ -97,6 +97,7 @@ function App() {
             <Route path="/admin/crearHotel" element={<CreateHotel />} />
             <Route path="/admin/crearHotel/imagenes" element={<AddImages/>}/>
             <Route path="/hotel/:id" element={<Hotel/>}/>
+            <Route path="/hotel/:id/:startDate/:finalDate/:idHabitacion" element={<Hotel/>}/>
           </Routes>
         </div>
         <Footer />

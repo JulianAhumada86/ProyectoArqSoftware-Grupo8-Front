@@ -24,34 +24,80 @@ function Reservation() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
     try {
       let idHabitacion
       for (let i=0; i< hoteles.length;i++){
-        if(hoteles[i].id = formData.option1){
+        if(hoteles[i].id.toString()===formData.option1){
           for(let j=0;j<hoteles[i].habitaciones.length;j++){
-            if(hoteles[i].habitaciones[j].Nombre==formData.option2){
+            if(hoteles[i].habitaciones[j].Nombre===formData.option2){
               idHabitacion = hoteles[i].habitaciones[j].Id
-              console.log(idHabitacion)
+              break;
             }
           }
+          break;
         }
       }
+    if(formData.option1===""){
+      setErrorMessage('Selecciona hotel');
+      setShowError(true);
+      setHoteles([])
+
+      getHoteles();
+
+      return
+    }
+    if(formData.option2===""){
+      setErrorMessage('Selecciona Habitacion');
+      setShowError(true);
+      setHoteles([])
+      getHoteles();
+      return
+    }
+    if(formData.startDate===""){
+      setErrorMessage('Selecciona fecha inicial');
+      setShowError(true);
+      setHoteles([])
+      getHoteles();
+
+      return
+    }
+    if(formData.endDate===""){
+      setErrorMessage('Selecciona fecha final');
+      setShowError(true);
+      setHoteles([])
+      getHoteles();
+      return
+    }
+    
+
       const response = await disponibilidadDeReserva(
         formData.option1,
         formData.startDate,
         formData.endDate,
         idHabitacion,
       );
-
+      
       if (response.status === 200 || response.status === 201) {
-        navigate(`/hotel/${formData.option1}`);
-      } else {
-        setErrorMessage('Error en los datos');
+        navigate(`/hotel/${formData.option1}/${formData.startDate}/${formData.endDate}/${idHabitacion}`);
+      }else if(response.status === 501){
+        navigate(`/registro`);
+
+      }else if (response.status===400) {
+        setErrorMessage(`${response.data.message}`);
         setShowError(true);
+        setHoteles([])
+        getHoteles();
+      }else{
+        setHoteles([])
+        getHoteles();
+        setErrorMessage(`Algo salio mal`);
+        setShowError(true);
+        
       }
     } catch (error) {
       console.error('Error al realizar la reserva:', error);
+      setHoteles([])
+      getHoteles();
       setErrorMessage('Algo salió mal');
       setShowError(true);
     }
@@ -70,6 +116,9 @@ function Reservation() {
   useEffect(() => {
     getHoteles();
   }, []);
+
+
+  
 
   return (
     <div className="container mt-5">
