@@ -49,7 +49,7 @@ function App() {
     return (
       <footer className="footer mt-5">
         <div className="container text-center">
-          <span>© 2023 Maldron Web Page. All Rights Reserved.</span>
+          <span>© 2024 Maldron Web Page. All Rights Reserved.</span>
         </div>
       </footer>
     );

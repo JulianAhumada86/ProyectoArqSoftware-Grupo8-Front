@@ -30,7 +30,7 @@ function Reservation() {
         formData.option1,
         formData.startDate,
         formData.endDate,
-        formData.option2.id,
+        formData.option2,
         user.token
       );
 
