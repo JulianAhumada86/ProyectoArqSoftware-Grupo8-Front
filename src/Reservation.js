@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getHotels } from './api';
 import { agregarReservation } from './api';
-import Cookies from 'js-cookie';
-import Swal from 'sweetalert2';
 
 function Reservation() {
   var user = JSON;
@@ -27,16 +25,12 @@ function Reservation() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // ... código del formulario
-
     try {
-      console.log(user.id)
       const response = await agregarReservation(
         formData.option1,
         formData.startDate,
         formData.endDate,
-        user.id,
-        formData.option2,
+        formData.option2.id,
         user.token
       );
 

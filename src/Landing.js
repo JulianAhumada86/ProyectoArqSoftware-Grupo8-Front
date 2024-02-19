@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {Carousel} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import { getImagesByHotelId, getHotelsC } from './api';
-import Reservation from './Reservation';
 
 function Landing() {
   const [hoteles, setHoteles] = useState([]);

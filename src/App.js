@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -9,7 +9,6 @@ import Reservation from './Reservation';
 import MiCuenta from './MiCuenta';
 import LogIn from './LogIn';
 import Hotel from './Hotel';
-import Confirmation from './Confirmation';
 import Cookies from 'js-cookie';
 //import jsonServerProvider from 'ra-data-json-server';
 import Admin from './Admin';
@@ -19,7 +18,6 @@ import Landing from './Landing';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [accountName, setAccountName] = useState('');
   const [userData, setUserData] = useState(null);
 
   const userDatax = Cookies.get('userData');
@@ -30,20 +28,17 @@ function App() {
     if (userDataCookie) {
       const user = JSON.parse(userDataCookie);
       setIsLoggedIn(true);
-      setAccountName('${user.name} ${user.lastName}');
       setUserData(user);
     }
   }, []);
 
-  const handleLogin = (name, data) => {
+  const handleLogin = (data) => {
     setIsLoggedIn(true);
-    setAccountName(name);
     setUserData(data);
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    setAccountName('');
     setUserData(null);
     Cookies.remove('userData');
   };
@@ -64,7 +59,7 @@ function App() {
     <Router>
       <div>
         <Navbar bg="light" expand="lg">
-          <Navbar.Brand style={{marginLeft:'20px'}}><img src={MaldronLogo}/></Navbar.Brand>
+          <Navbar.Brand style={{marginLeft:'20px'}}><img src={MaldronLogo} alt="Logo"/></Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
@@ -102,7 +97,6 @@ function App() {
             <Route path="/admin/crearHotel" element={<CreateHotel />} />
             <Route path="/admin/crearHotel/imagenes" element={<AddImages/>}/>
             <Route path="/hotel/:id" element={<Hotel/>}/>
-            <Route path="/confirmacion" element={<Confirmation/>}/>
           </Routes>
         </div>
         <Footer />
