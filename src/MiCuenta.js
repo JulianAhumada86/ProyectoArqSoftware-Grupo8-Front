@@ -7,7 +7,6 @@ import { getReservationsByUser, getImagesByHotelId } from './api';
 const MiCuenta = () => {
   const userData = Cookies.get('userData');
   const [reservas, setReservas] = useState([]);
-  const [imagenPerfil, setImagenPerfil] = useState(null); // Cambiado a null
 
   const getReservas = async () => {
     const response = await getReservationsByUser();
@@ -16,22 +15,13 @@ const MiCuenta = () => {
     console.log(response);
   };
 
-  const getImagen = async () => {
-    try {
-      const response = await getImagesByHotelId(1);
-      const imagen = response.data.images[0].Data;
-      // Almacenar la imagen decodificada como un objeto Uint8Array
-      setImagenPerfil(new Uint8Array(atob(imagen).split('').map(char => char.charCodeAt(0))));
-    } catch (error) {
-      console.error('Error al obtener la imagen de perfil:', error);
-    }
-  };
+  
 
   const navigate = useNavigate();
 
   useEffect(() => {
     getReservas();
-    getImagen();
+    console.log(reservas)
   }, []); // La dependencia vacía asegura que estos efectos solo se ejecuten una vez al montar el componente.
 
   if (!userData) {
@@ -51,15 +41,15 @@ const MiCuenta = () => {
       <h1>Mi Cuenta</h1>
       <div className="user-details">
         <div className="user-image">
-          {imagenPerfil && (
+          
             <img
               id="perfil"
-              src={`data:image/jpeg;base64,${btoa(String.fromCharCode.apply(null, imagenPerfil))}`}
+              src="https://static.vecteezy.com/system/resources/previews/002/387/693/large_2x/user-profile-icon-free-vector.jpg"
               alt="Foto de perfil"
               width="250"
               height="250"
             />
-          )}
+         
         </div>
         <div className="user-info">
           <p className="user-info-line">

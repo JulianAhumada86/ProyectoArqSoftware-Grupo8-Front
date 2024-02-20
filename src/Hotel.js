@@ -18,7 +18,6 @@ function HotelDetail() {
       const response = await getHotelById(id);
       setHotel(response.data);
       console.log(response.data)
-      console.log(hotel.amenities)
     } catch (error) {
       console.error(error);
     }
@@ -121,7 +120,27 @@ function HotelDetail() {
         </Col>
       </Row>
       <Row>
+      <div className="mt-3">
+        {hotel ? (
+          <>
+            <h5>Amenidades</h5>
+            <div className="d-flex flex-wrap">
+              {hotel.amenities.map((amenity, index) => (
+                <Card key={index} className="m-2" style={{ width: '12rem' }}>
+                  <Card.Body>
+                    <Card.Text>{amenity.name}</Card.Text>
+                  </Card.Body>
+                </Card>
+              ))}
+            </div>
+            </>
+          ): (
+            <>
+            <h5>Amenidades</h5>
+            </>
+          )}
 
+          </div>   
       </Row>
       <Row className="d-flex justify-content-between mt-4">
         {showReservations && (
@@ -157,16 +176,5 @@ export default HotelDetail;
 
 
 /*
-      <div className="mt-3">
-            <h5>Amenidades</h5>
-            <div className="d-flex flex-wrap">
-              {hotel.amenities.map((amenity, index) => (
-                <Card key={index} className="m-2" style={{ width: '12rem' }}>
-                  <Card.Body>
-                    <Card.Text>{amenity.nombre}</Card.Text>
-                  </Card.Body>
-                </Card>
-              ))}
-            </div>
-          </div>        
+           
 */
