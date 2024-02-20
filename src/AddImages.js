@@ -1,18 +1,12 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import { useDropzone } from 'react-dropzone';
+import { postImage } from './api';
 
 function AddImages() {
   const [imagenes, setImagenes] = useState([]);
   const [previewImages, setPreviewImages] = useState([]);
 
-  const handleCrearHotel = () => {
-    // Lógica para enviar los datos del hotel al backend
-    // Puedes usar estos datos: nombre, descripcion, imagenes, amenities
-    console.log({
-      imagenes,
-    });
-  };
 
   const handleEliminarImagen = (index) => {
     // Eliminar la imagen del estado
@@ -27,7 +21,7 @@ function AddImages() {
   };
 
   const { getRootProps, getInputProps } = useDropzone({
-    accept: 'image/*', // Solo permitir archivos de imagen
+    accept: 'image/jpeg', // Solo permitir archivos de imagen
     onDrop: (acceptedFiles) => {
       // Actualizar el estado de las imágenes y generar la previsualización
       setImagenes([...imagenes, ...acceptedFiles]);
@@ -35,6 +29,22 @@ function AddImages() {
       setPreviewImages(preview);
     },
   });
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const formData = new FormData();
+      imagenes.forEach((imagen) => {
+        formData.append('image', imagen);
+      });
+      const response = await postImage(2, formData); 
+      console.log(response);
+    } catch (error) {
+      console.error('Error al procesar las imágenes:', error);
+    }
+  };
+  
+  
 
   return (
     <Container className="mt-5">
@@ -57,18 +67,15 @@ function AddImages() {
                   onClick={() => handleEliminarImagen(index)}
                   style={deleteButtonStyles}
                 >
-                  ×
+                  x
                 </button>
               </div>
             ))}
           </div>
       </Row>
       <Row className="mt-3">
-        <Col md={6}>
-          {/* Puedes agregar más campos según sea necesario */}
-        </Col>
         <Col md={6} className="d-flex justify-content-end">
-          <Button variant="primary" onClick={handleCrearHotel}>
+          <Button variant="primary" onClick={handleSubmit}>
             Crear
           </Button>
         </Col>

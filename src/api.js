@@ -54,9 +54,17 @@ export const postHotel = async (hotelData) => {
 }
 
 //Imagen
-export const postImage = async (image,idHotel) => {
+export const postImage = async (idHotel,image) => {
   try {
-    const response = await axios.post(`${API_URL}/${image}/${idHotel}`);  
+    
+    const formData = new FormData();
+    formData.append('image', image);
+    const response = await axios.post(`${API_URL}/image/${idHotel}`, formData, {
+      headers: {
+        'Content-Type': 'image/jpeg'
+      },
+      transformRequest: [(data) => data]
+    });
     return response;
     
   } catch (error) {
