@@ -30,9 +30,10 @@ const [amenitiesOptions, setAmenitiesOptions] = useState([]);
 const fetchAmenities = async () => {
   try {
     const response = await getAmenities(); // Función que obtiene las amenities desde la API
-    const amenities = response.data.map((amenity) => ({
+    console.log(response.data.amenities)
+    const amenities = response.data.amenities.map((amenity) => ({
       value: amenity.id,
-      label: amenity.nombre,
+      label: amenity.name,
     }));
     setAmenitiesOptions(amenities);
   } catch (error) {
@@ -73,39 +74,46 @@ const fetchAmenities = async () => {
 
   const handleCrearHotel = async (event) => {
     event.preventDefault();
-
+  
     if (formData.nombre === "" || formData.descripcion === "") {
       setErrorMessage('Debe ingresar datos');
       setShowError(true);
     } else {
-
       try {
-
-        const response = await postHotel(
-
-          formData.nombre,
-          formData.numHabitaciones,
-          formData.descripcion
-        );
-
+        const hotelData = {
+          hotel: {
+            Name: formData.nombre,
+            description: formData.descripcion
+          },
+          habitaciones: formData.habitaciones.map(habitacion => ({
+            id: parseInt(habitacion.tipo),
+            cantidad: parseInt(habitacion.cantidad)
+          })),
+          amenities: formData.amenities.map(amenitie => ({
+            id: amenitie
+          }))
+        };
+        console.log(hotelData)
+        const response = await postHotel(hotelData);
+  
         if (response.status === 200 || response.status === 201) {
           setShowError(false);
-          navigate("/admin/crearHotel/imagenes")
-
+          navigate("/admin/crearHotel/imagenes");
         } else if (response.status === 400) {
           setErrorMessage('Algo no está funcionando');
-          setShowError(true)
+          setShowError(true);
         } else {
           setErrorMessage('Error en los datos');
-          setShowError(true)
+          setShowError(true);
         }
       } catch (error) {
-        setErrorMessage('caca');
-        setShowError(true)
+        setErrorMessage('Error al agregar hotel');
+        setShowError(true);
       }
     }
   };
-
+  
+  
   const TipoHabitacion = async () => {
     try {
       console.log("Andando ")
