@@ -218,7 +218,6 @@ export const getReservations = async () => {
   }
 };
 
-
 export const getReservationsByUser = async () => {
   try {
     const userData = Cookies.get('userData');
@@ -285,6 +284,17 @@ export const tipoHabitaciones = async () =>{
 
     axios.defaults.headers.common['Authorization'] = user.token;
     const response = await axios.get(`${API_URL}/admin/Habitaciones`);
+    return response
+
+  } catch (error) {
+    console.error('Error al obtener los usuarios:', error);
+  }
+};
+
+export const getAmenities = async () => {
+  try {
+    
+    const response = await axios.get(`${API_URL}/getAmenities`);
     return response
 
   } catch (error) {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import Select from 'react-select';
-import { postHotel, tipoHabitaciones } from './api';
+import { postHotel, tipoHabitaciones,getAmenities} from './api';
 
 function CreateHotel() {
   const [formData, setFormData] = useState({
@@ -23,6 +23,22 @@ function CreateHotel() {
   const [habitaciones, setHabitaciones] = useState([]);
   const [habitacionSeleccionada, setHabitacionSeleccionada] = useState('');
   const [opcionesHabitaciones, setOpcionesHabitaciones] = useState([]);
+// Antes del componente CreateHotel
+const [amenitiesOptions, setAmenitiesOptions] = useState([]);
+
+// Dentro del efecto useEffect
+const fetchAmenities = async () => {
+  try {
+    const response = await getAmenities(); // Función que obtiene las amenities desde la API
+    const amenities = response.data.map((amenity) => ({
+      value: amenity.id,
+      label: amenity.nombre,
+    }));
+    setAmenitiesOptions(amenities);
+  } catch (error) {
+    console.error('Error al obtener las amenities:', error);
+  }
+};
 
   const handleHabitacionChange = (e, index) => {
     const { value } = e.target;
@@ -111,6 +127,7 @@ function CreateHotel() {
 
 
   useEffect(() => {
+    fetchAmenities();
     TipoHabitacion();
     console.log(opcionesHabitaciones)
   }, []);
@@ -150,12 +167,7 @@ function CreateHotel() {
             <Form.Label>Amenities</Form.Label>
             <Select
               isMulti
-              options={[
-                { value: 'Piscina', label: 'Piscina' },
-                { value: 'Wifi gratuito', label: 'Wifi gratuito' },
-                { value: 'Estacionamiento', label: 'Estacionamiento' },
-                // Agrega más opciones según tus necesidades
-              ]}
+              options={amenitiesOptions}
               onChange={handleAmenitiesChange}
             />
           </Form.Group>
